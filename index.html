@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 <script src="/socket.io/socket.io.js"></script>
 <script
 			  src="https://code.jquery.com/jquery-1.12.4.js"
@@ -8,6 +15,7 @@
 			  crossorigin="anonymous"></script>
 <style>
 	#chat_space {
+		width: 100%;
 		overflow:auto;
 
 	}
@@ -18,21 +26,21 @@
 </style>
 </head>
 <body>
-	<div id="chat_space">
+	<div id="chat_space" class="container-fluid" style="padding:5px; display:none">
 	</div>
 	
-	<form id="loginForm">
-		<p>ENter your name to join the chatroom</p>
-		<div>
-			<label>Enter your name:</label><br/>
-			<input type="text" id='user' value="Name" name="name">
+	<form id="loginForm" style="margin:auto">
+		<p>Enter your name to join the chatroom</p>
+		<div class="form-group">
+			<label style="width:40%; margin:auto;">Enter your name:</label><br/>
+			<input type="text"  class="form-control" id='user'  name="name" required>
 		</div>
-		<input type='submit' value='submit-login'>
+		<input type='submit' class="btn btn-default" value='submit-login'>
 	</form>
 	<form id="messageForm">
-		<div>
-			<textarea id="message"></textarea>
-			<input type="submit"  value = "Send Message">
+		<div class="form-group">
+			<textarea id="message" class="form-control" required></textarea>
+			<input type="submit" class="btn btn-default"  value = "Send Message">
 		</div>
 	</form>
 	<div id = "online_users"></div>
@@ -43,6 +51,7 @@
 			var $messageForm = $('#messageForm');
 			var message = $('#message');
 			var chat = $('#chat_space');
+			chat.css('width', $(window).height() );
 			var loginForm = $('#loginForm');
 			var user = $('#user');
 			var online_users = $('#online_users');
@@ -54,6 +63,7 @@
 						loginForm.hide();
 						//e.preventDefault();
 						$messageForm.show();
+						chat.show();
 					}	
 				});
 			});
@@ -76,7 +86,7 @@
 				
 			});
 					socket.on('new message', function( data) {
-					chat.append('<div>'+data.msg+'</div>');
+					chat.append('<br/><div class="well well-sm" style="display: inline-block; overflow: auto">'+data.msg+'</div>');
 				});
 		});
 	</script>
