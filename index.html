@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<script
+			  src="https://code.jquery.com/jquery-1.12.4.js"
+			  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+			  crossorigin="anonymous"></script>
+<style>
+	#chat_space {
+		overflow:auto;
+
+	}
+	
+	#messageForm {
+		display:none;
+	}
+</style>
+</head>
+<body>
+	<div id="chat_space">
+	</div>
+	
+	<form id="loginForm">
+		<p>ENter your name to join the chatroom</p>
+		<div>
+			<label>Enter your name:</label><br/>
+			<input type="text" id='user' value="Name" name="name">
+		</div>
+		<input type='submit' value='submit-login'>
+	</form>
+	<form id="messageForm">
+		<div>
+			<textarea id="message"></textarea>
+			<input type="submit"  value = "Send Message">
+		</div>
+	</form>
+	<div id = "online_users"></div>
+	<script>
+		$(function() {
+			//connect 
+			var socket = io.connect();
+			var $messageForm = $('#messageForm');
+			var message = $('#message');
+			var chat = $('#chat_space');
+			var loginForm = $('#loginForm');
+			var user = $('#user');
+			var online_users = $('#online_users');
+			
+			loginForm.submit(function(e) {
+				e.preventDefault();
+				socket.emit('new user', user.val(), function(data) {
+					if(data) {
+						loginForm.hide();
+						//e.preventDefault();
+						$messageForm.show();
+					}	
+				});
+			});
+			socket.on('update user list',function(data){
+				var html='<ul>';
+				
+				data.forEach(function(user) {
+					html+='<li>'+user+'</li>';
+				});
+				
+				html+='</ul>';
+				online_users.empty();
+				online_users.append(html);
+			});			
+			$messageForm.submit(function(e) {
+				e.preventDefault();
+				//'emit message' is an event available to all clients and what to do when this event is emmited is given by the function for it. check the server.js . Similarly disconnect event is also available.
+				socket.emit('send message', user.val()+': '+message.val());
+				message.val('');
+				
+			});
+					socket.on('new message', function( data) {
+					chat.append('<div>'+data.msg+'</div>');
+				});
+		});
+	</script>
+</body>
+</html>
